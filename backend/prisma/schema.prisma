@@ -1,0 +1,84 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  CLIENT
+  LAWYER
+  ADMIN
+}
+
+enum ConsultationType {
+  TEXT
+  AUDIO
+  VIDEO
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String?
+  role          UserRole
+  firstName     String
+  lastName      String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // OAuth fields
+  googleId      String?   @unique
+  linkedinId    String?   @unique
+
+  // Profile fields
+  phoneNumber   String?
+  profileImage  String?
+  bio          String?   @db.Text
+
+  // Lawyer specific fields
+  barNumber    String?   @unique
+  specialties  String[]
+  hourlyRate   Float?
+  
+  // Relationships
+  clientAppointments    Appointment[] @relation("ClientAppointments")
+  lawyerAppointments   Appointment[] @relation("LawyerAppointments")
+  sentMessages         Message[]     @relation("SentMessages")
+  receivedMessages    Message[]     @relation("ReceivedMessages")
+}
+
+model Appointment {
+  id              String            @id @default(cuid())
+  clientId        String
+  lawyerId        String
+  startTime       DateTime
+  endTime         DateTime
+  type            ConsultationType
+  status          String            // PENDING, CONFIRMED, CANCELLED, COMPLETED
+  notes           String?           @db.Text
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  // Relationships
+  client          User              @relation("ClientAppointments", fields: [clientId], references: [id])
+  lawyer          User              @relation("LawyerAppointments", fields: [lawyerId], references: [id])
+  messages        Message[]
+}
+
+model Message {
+  id              String       @id @default(cuid())
+  content         String       @db.Text
+  senderId        String
+  receiverId      String
+  appointmentId   String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  // Relationships
+  sender          User         @relation("SentMessages", fields: [senderId], references: [id])
+  receiver        User         @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  appointment     Appointment? @relation(fields: [appointmentId], references: [id])
+} 

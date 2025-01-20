@@ -1,5 +1,5 @@
-# advolot
-Project Overview**
+**advolot**
+*Project Overview*
 - *Goal:* Build an online legal consultation platform, initially targeting India but scalable globally.
 - *User Roles:*  
   - *Clients:* Search lawyer, signup, pay, book & schedule consultation, or consult instantly with lawyers via text, audio, video etc.
@@ -10,6 +10,9 @@ Project Overview**
   - Consultation interface (chat, file sharing, audio/video calls).  
   - Post-consultation features - chat history, document sharing and management, reminders, (in future) AI tools to help drafting documents, summarize, translate, suggest, etc.
   - Instant consultations (timeout-based system).
+
+
+**Guidelines and instructions for the project**
 
 "Build a full-stack online legal consultation platform-"advolot" with the
 following specifications:

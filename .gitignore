@@ -19,6 +19,11 @@ out/
 .env.test.local
 .env.production.local
 
+# local AI instruction files
+instructions.md
+roadmap.md
+
+
 # Debug logs
 npm-debug.log*
 yarn-debug.log*
