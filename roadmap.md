@@ -1,6 +1,5 @@
 # Advolot Project Roadmap
 
-
 ## Table of Contents
 1. [Phase 1: Project Initialization](#phase-1-project-initialization)
 2. [Phase 2: Frontend Development](#phase-2-frontend-development)

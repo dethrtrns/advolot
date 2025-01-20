@@ -42,3 +42,5 @@ Thumbs.db
 # Prisma
 prisma/*.db
 prisma/migrations/ 
+instructions.md
+roadmap.md
