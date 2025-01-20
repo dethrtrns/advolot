@@ -1,3 +1,14 @@
+/**
+ * Lawyer Search Page
+ * 
+ * Provides functionality for clients to search and filter lawyers based on:
+ * - Name or specialty (text search)
+ * - Specific legal specialties (multi-select)
+ * - Maximum hourly rate
+ * 
+ * Results are displayed in cards showing lawyer profiles with key information
+ * and a link to view their full profile.
+ */
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -7,6 +18,9 @@ import { IconSearch } from '@tabler/icons-react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import api from '@/utils/api';
 
+/**
+ * Interface representing a lawyer's profile data
+ */
 interface Lawyer {
   id: string;
   firstName: string;
@@ -19,13 +33,14 @@ interface Lawyer {
 }
 
 export default function LawyersPage() {
+  // State management for search results and filters
   const [lawyers, setLawyers] = useState<Lawyer[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSpecialties, setSelectedSpecialties] = useState<string[]>([]);
   const [maxHourlyRate, setMaxHourlyRate] = useState<number | undefined>(undefined);
 
-  // List of legal specialties (you can expand this list)
+  // Predefined list of legal specialties
   const specialtiesList = [
     'Criminal Law',
     'Family Law',
@@ -39,9 +54,14 @@ export default function LawyersPage() {
     'Estate Planning'
   ];
 
+  /**
+   * Fetches lawyers based on current filter settings
+   * Re-runs when any filter changes
+   */
   useEffect(() => {
     const fetchLawyers = async () => {
       try {
+        // Call API with current filter parameters
         const response = await api.get('/users', {
           params: {
             role: 'LAWYER',
@@ -52,6 +72,7 @@ export default function LawyersPage() {
         });
         setLawyers(response.data);
       } catch (error) {
+        // Show error notification if request fails
         notifications.show({
           title: 'Error',
           message: 'Failed to load lawyers',
@@ -65,6 +86,7 @@ export default function LawyersPage() {
     fetchLawyers();
   }, [searchTerm, selectedSpecialties, maxHourlyRate]);
 
+  // Show loading state while fetching data
   if (loading) {
     return (
       <AppLayout>
@@ -80,9 +102,10 @@ export default function LawyersPage() {
       <Container size="lg">
         <Title order={1} mb="lg">Find a Lawyer</Title>
 
-        {/* Search and Filter Section */}
+        {/* Search and Filter Controls */}
         <Paper shadow="sm" p="md" mb="xl">
           <Stack>
+            {/* Text search input */}
             <TextInput
               placeholder="Search by name or specialty"
               value={searchTerm}
@@ -90,6 +113,7 @@ export default function LawyersPage() {
               leftSection={<IconSearch size={16} />}
             />
             <Group grow>
+              {/* Specialty filter */}
               <MultiSelect
                 label="Specialties"
                 placeholder="Select specialties"
@@ -97,11 +121,12 @@ export default function LawyersPage() {
                 value={selectedSpecialties}
                 onChange={setSelectedSpecialties}
               />
+              {/* Hourly rate filter */}
               <NumberInput
                 label="Maximum Hourly Rate"
                 placeholder="Enter amount"
                 value={maxHourlyRate}
-                onChange={(val) => setMaxHourlyRate(val || undefined)}
+                onChange={(val: number | string | undefined) => setMaxHourlyRate(typeof val === 'number' ? val : undefined)}
                 min={0}
                 prefix="$"
               />
@@ -111,11 +136,14 @@ export default function LawyersPage() {
 
         {/* Results Section */}
         {lawyers.length === 0 ? (
+          // Show message when no results found
           <Text c="dimmed" ta="center">No lawyers found matching your criteria.</Text>
         ) : (
+          // Display lawyer cards
           <Stack>
             {lawyers.map((lawyer) => (
               <Paper key={lawyer.id} shadow="sm" p="md">
+                {/* Lawyer header with name and rate */}
                 <Group justify="space-between" mb="xs">
                   <div>
                     <Text size="lg" fw={500}>{lawyer.firstName} {lawyer.lastName}</Text>
@@ -123,12 +151,15 @@ export default function LawyersPage() {
                   </div>
                   <Text fw={500}>${lawyer.hourlyRate}/hr</Text>
                 </Group>
+                {/* Lawyer bio */}
                 <Text size="sm" mb="md">{lawyer.bio || 'No bio provided'}</Text>
+                {/* Specialties tags */}
                 <Group gap={8} mb="md">
                   {lawyer.specialties.map((specialty) => (
                     <Text key={specialty} size="sm" c="blue">{specialty}</Text>
                   ))}
                 </Group>
+                {/* Profile link */}
                 <Button variant="light" component="a" href={`/lawyers/${lawyer.id}`}>
                   View Profile
                 </Button>
