@@ -2,7 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEmail, IsString, MinLength, IsOptional, IsEnum, IsNumber, Min, IsArray } from 'class-validator';
 import { UserRole } from '@prisma/client';
 
-export class CreateUserDto {
+export class SignupDto {
   @ApiProperty({ example: 'john@example.com' })
   @IsEmail()
   email: string;
@@ -10,8 +10,7 @@ export class CreateUserDto {
   @ApiProperty({ example: 'password123' })
   @IsString()
   @MinLength(8)
-  @IsOptional()
-  password?: string;
+  password: string;
 
   @ApiProperty({ example: 'John' })
   @IsString()

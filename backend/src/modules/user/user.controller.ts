@@ -7,12 +7,15 @@ import {
   Param,
   Delete,
   UseGuards,
+  Request,
+  Query,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags, ApiQuery } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { Request as ExpressRequest } from 'express';
 
 @ApiTags('users')
 @Controller('users')
@@ -25,10 +28,31 @@ export class UserController {
   }
 
   @Get()
+  @ApiQuery({ name: 'role', required: false })
+  @ApiQuery({ name: 'specialties', required: false })
+  @ApiQuery({ name: 'maxHourlyRate', required: false })
+  @ApiQuery({ name: 'search', required: false })
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  findAll() {
-    return this.userService.findAll();
+  findAll(
+    @Query('role') role?: string,
+    @Query('specialties') specialties?: string,
+    @Query('maxHourlyRate') maxHourlyRate?: number,
+    @Query('search') search?: string,
+  ) {
+    return this.userService.findAll({
+      role,
+      specialties: specialties?.split(','),
+      maxHourlyRate: maxHourlyRate ? Number(maxHourlyRate) : undefined,
+      search,
+    });
+  }
+
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  async getCurrentUser(@Request() req: ExpressRequest & { user: { id: string } }) {
+    return this.userService.findOne(req.user.id);
   }
 
   @Get(':id')

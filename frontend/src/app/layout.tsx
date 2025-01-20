@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import '@mantine/core/styles.css';
+import '@mantine/notifications/styles.css';
 import '../styles/globals.css';
-import { MantineProvider, ColorSchemeScript } from '@mantine/core';
-import { theme } from '../lib/mantine';
+import { ColorSchemeScript } from '@mantine/core';
+import ClientLayout from './client-layout';
 
 export const metadata: Metadata = {
   title: 'Advolot - Legal Consultation Platform',
@@ -21,9 +22,9 @@ export default function RootLayout({
         <ColorSchemeScript />
       </head>
       <body>
-        <MantineProvider theme={theme}>
+        <ClientLayout>
           {children}
-        </MantineProvider>
+        </ClientLayout>
       </body>
     </html>
   );
